@@ -135,3 +135,27 @@ with open("network.txt") as network:
             info_file.write("\n")
 
             prob_file.write(f"{src},{dest},{dest_lt_counts[0]/src_lt_count},{dest_lt_counts[1]/(src_total-src_lt_count)}\n")
+
+# Calculate probabilities of ocular data based
+numSamples = [[113,88],[121,88]] # rows=fr and nfr, cols=participant 1 and 2
+all_means = {'size':[[1801,1670],[2209,2025]], 'duration':[[635,329],[453,265]], 'rate':[[6.07,0.27],[4.11,0.04]]}
+all_ranges = {'size':[[389,281],[378,330]], 'duration':[[392,157],[204,38]], 'rate':[[5.7,0.9],[3.92,0.38]]}
+
+eye = open('ocularProbs.txt','w')
+for key, means in all_means.items():
+    ranges = all_ranges[key]
+    
+    mean = [0,0]
+    ran = [0,0]
+    for i in range(2):
+        for j in range(2):
+            mean[i] += means[i][j]*numSamples[i][j]
+            ran[i] += ranges[i][j]*numSamples[i][j]
+        mean[i] = mean[i]/sum(numSamples[i])
+        ran[i] = ran[i]/sum(numSamples[i])
+    midpoint = sum(mean)/2
+    prob_false = (ran[0] - abs(mean[0]-midpoint))/(2*ran[0])
+    eye.write(f"P({key}|fr) = {1-prob_false}\n")
+    
+    prob_false = (ran[1] - abs(mean[1]-midpoint))/(2*ran[1])
+    eye.write(f"P({key}|nfr) = {1-prob_false}\n")

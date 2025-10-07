@@ -80,6 +80,8 @@ with open("prob.txt") as prob_file:
         probs.append(line.split(','))
 probs = np.array(probs)
 
+ocular_probs = {'pupil_dil': [[1-0.771024986863271,0.771024986863271],[1-0.7837729834522977,0.7837729834522977]]}
+
 # # Feature layer one: has parent node as only parent
 for child in feature_layer_1:
     try:
@@ -87,8 +89,9 @@ for child in feature_layer_1:
         bn.cpt(child)[{parent_node[0]: 0}] = [float(prob[2]), 1-float(prob[2])]
         bn.cpt(child)[{parent_node[0]: 1}] = [float(prob[3]), 1-float(prob[3])]
     except:
-        bn.cpt(child)[{parent_node[0]: 0}] = [0.5, 0.5]
-        bn.cpt(child)[{parent_node[0]: 1}] = [0.5, 0.5]
+        prob = ocular_probs[child]
+        bn.cpt(child)[{parent_node[0]: 0}] = prob[0]
+        bn.cpt(child)[{parent_node[0]: 1}] = prob[1]
 
 # # Feature layer 2: P3 node which has alpha nodes as parents
 for i in range (8):
