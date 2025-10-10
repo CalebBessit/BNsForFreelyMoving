@@ -15,7 +15,7 @@ The structure of this directory is as follows:
 ├── results_plotter.py       -> Scripts for plotting inference results.
 ├── requirements.txt         -> Python requirements file.
 ├── network.txt              -> Text representation of the network for making calculating probabilities easier.
-└── data/                    -> Contains the original MATLAB files
+└── Data/                    -> Contains the original MATLAB files
 ```
 
 To run the code, please begin by installing the required files (suitable for Windows 10):
