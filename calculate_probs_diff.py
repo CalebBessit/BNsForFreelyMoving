@@ -1,5 +1,5 @@
 # Calculates the probabilties from an experiment set of data
-# Caleb Bessit
+# Caleb Bessit and Matthew Dean
 # 03 October 2025
 
 
