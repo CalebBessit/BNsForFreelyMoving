@@ -88,6 +88,8 @@ if DOING_DECISIONS:
 fmt_prob = 0.495260663507109
 bn.cpt(parent_node[0]).fillWith([1-fmt_prob,fmt_prob])
 
+bn.cpt("load_type").fillWith([0.8, 0.2])
+bn.cpt("history").fillWith([fmt_prob, 0.45,0.35])
 # Extract conditional probabilities
 probs = []
 with open("prob.txt") as prob_file:
@@ -95,6 +97,7 @@ with open("prob.txt") as prob_file:
         probs.append(line.split(','))
 probs = np.array(probs)
 
+# Calculated from the dataset
 ocular_probs = {'pupil_dil': [[1-0.771024986863271,0.771024986863271],[1-0.7837729834522977,0.7837729834522977]]}
 # Hard code probabilities for large external stimulus, environment variables
 
@@ -135,10 +138,26 @@ os.makedirs(outdir, exist_ok=True)
 
 # Table for utility function
 if DOING_DECISIONS:
-    # bn.utility("utility")[{"freely_moving_thoughts":1, "notify_user":1}] = 10    #notifying the user when they have freely-moving thoughts is very good
-    # bn.utility("utility")[{"freely_moving_thoughts":0, "notify_user":0}] = 5     #not notifying the user when they are not having freely-moving thoughts is also good (neutral?)
-    # bn.utility("utility")[{"freely_moving_thoughts":1, "notify_user":0}] = -1    #not notifying the user when they are having freely-moving thoughts is not good
-    # bn.utility("utility")[{"freely_moving_thoughts":0, "notify_user":1}] = -10   #notifying the user when they are not having freely-moving thoughts (potentially distracting them) is very bad
+    # bn.utility("utility")[{"freely_moving_thoughts":1, "notify_user":1}] = 100    #notifying the user when they have freely-moving thoughts is very good
+    # bn.utility("utility")[{"freely_moving_thoughts":0, "notify_user":0}] = 50     #not notifying the user when they are not having freely-moving thoughts is also good (neutral?)
+    # bn.utility("utility")[{"freely_moving_thoughts":1, "notify_user":0}] = -50    #not notifying the user when they are having freely-moving thoughts is not good
+    # bn.utility("utility")[{"freely_moving_thoughts":0, "notify_user":1}] = -100   #notifying the user when they are not having freely-moving thoughts (potentially distracting them) is very bad
+
+
+
+    # Fill with all zeros initially for debugging
+
+    # Initialize all combinations to 0 (or a baseline utility)
+    u = bn.utility("utility")
+    for fmt in range(2):
+        for load in range(2):
+            for hist in range(3):
+                for notify in range(2):
+                    u[{"freely_moving_thoughts": fmt,
+                    "load_type": load,
+                    "history": hist,
+                    "notify_user": notify}] = 0.0  
+
 
     bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":1, "history":2, "notify_user":1}] = 100    #notifying the user when they have freely-moving thoughts is very good
     bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":1, "history":1, "notify_user":1}] = 95    #notifying the user when they have freely-moving thoughts is very good
