@@ -138,33 +138,33 @@ os.makedirs(outdir, exist_ok=True)
 # Table for utility function
 if DOING_DECISIONS:
     # Utility values below were assigned by reasoning though the implications of each assignment in the context of notifying a user
-    bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":1, "history":2, "notify_user":1}] = 100    
-    bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":1, "history":1, "notify_user":1}] = 95    
-    bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":1, "history":0, "notify_user":1}] = 90    
-    bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":0, "history":2, "notify_user":1}] = 95    
-    bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":0, "history":1, "notify_user":1}] = 90    
-    bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":0, "history":0, "notify_user":1}] = 85    
+    bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":1, "history":2, "notify_user":1}] = 100    #If user is and has been distracted for an extended period of time due to FMT and is doing a high load task, they absolutely should be notified
+    bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":1, "history":1, "notify_user":1}] = 95     #If user is and has been distracted for a short while due to FMT and is doing a high load task, they should be notified
+    bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":1, "history":0, "notify_user":1}] = 90     #If user is distracted due to FMT and is doing a high load task, theyshould be notified
+    bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":0, "history":2, "notify_user":1}] = 95     #If user is and has been distracted for an extended period of time due to FMT and is doing a low load task, they should be notified, but arguably, since it is a normal load task, having some level of distractedness is permissible compared to a high-load task
+    bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":0, "history":1, "notify_user":1}] = 90     #If user is and has been distracted for a short while due to FMT and is doing a low load task, they should be notified, but arguably, since it is a normal load task, having some level of distractedness is permissible compared to a high-load task
+    bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":0, "history":0, "notify_user":1}] = 85     #If user is distracted due to FMT and is doing a low load task, they should be notified, but arguably, since it is a normal load task, having some level of distractedness is permissible compared to a high-load task
     
-    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":1, "history":2, "notify_user":1}] = 60    
-    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":1, "history":1, "notify_user":1}] = 50    
-    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":1, "history":0, "notify_user":1}] = -100    
-    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":0, "history":2, "notify_user":1}] = 50    
-    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":0, "history":1, "notify_user":1}] = 40    
-    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":0, "history":0, "notify_user":1}] = -80    
+    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":1, "history":2, "notify_user":1}] = 60     #If the user is not currently distracted but were for an extended period prior to this instant, they should probably still be notified to redirect their attention
+    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":1, "history":1, "notify_user":1}] = 50     #If the user is not currently distracted but were for a short while prior to this instant, they should probably still be notified to redirect their attention
+    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":1, "history":0, "notify_user":1}] = -100   #If the user is not distracted and they were not distracted for an extended period of time leading up to this instance, they absolutely should NOT be notified. We do not want to distract them.
+    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":0, "history":2, "notify_user":1}] = 50     #If the user is not currently distracted but were for an extended period prior to this instant, they should probably still be notified to redirect their attention
+    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":0, "history":1, "notify_user":1}] = 40     #If the user is not currently distracted but were for a short while prior to this instant, they should probably still be notified to redirect their attention
+    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":0, "history":0, "notify_user":1}] = -80    #If the user is not distracted and they were not distracted for an extended period of time leading up to this instance, they absolutely should NOT be notified. We do not want to distract them.
     
-    bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":1, "history":2, "notify_user":0}] = -100    
-    bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":1, "history":1, "notify_user":0}] = -95    
-    bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":1, "history":0, "notify_user":0}] = -90    
-    bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":0, "history":2, "notify_user":0}] = -95    
+    bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":1, "history":2, "notify_user":0}] = -100   #If the user is distracted due to having FMT and has had FMT for an extended period prior to this instant, and we are performing a high-load task, it is absolutely bad if we do not notify them
+    bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":1, "history":1, "notify_user":0}] = -95    #If the user is distracted due to having FMT and has had FMT for a short while prior to this instant, and we are performing a high-load task, it is absolutely bad if we do not notify them
+    bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":1, "history":0, "notify_user":0}] = -90    #If the user is distracted due to having FMT at this instant, and they are performing a high-load task, it is absolutely bad if we do not notify them
+    bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":0, "history":2, "notify_user":0}] = -95    #The same reasoning as the three above except it is a normal load task.
     bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":0, "history":1, "notify_user":0}] = -90    
     bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":0, "history":0, "notify_user":0}] = -85   
     
-    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":1, "history":2, "notify_user":0}] = -5    
-    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":1, "history":1, "notify_user":0}] = -2    
-    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":1, "history":0, "notify_user":0}] = 100    
+    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":1, "history":2, "notify_user":0}] = -5    #If the user is not having freely moving thoughts but did for an extended period of time prior to this instant and we do not notify them, it is not a horrible outcome but we probably should notify them.
+    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":1, "history":1, "notify_user":0}] = -2    #Same as above and for below.
     bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":0, "history":2, "notify_user":0}] = -3    
-    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":0, "history":1, "notify_user":0}] =  -1   
-    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":0, "history":0, "notify_user":0}] = 95    
+    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":0, "history":1, "notify_user":0}] =  -1 
+    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":1, "history":0, "notify_user":0}] = 100   #If They are performing a high-load task, are not and have not been experiencing FMT, and we do not notify them, this is absolutely good since we do not distract them.  
+    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":0, "history":0, "notify_user":0}] = 95    #Same as above
     
     
 
