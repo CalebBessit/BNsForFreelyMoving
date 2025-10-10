@@ -15,6 +15,7 @@ limit = 5
 positions = np.arange(limit)
 acc_pos, bal_pos = positions - 0.1, positions + 0.1
 
+# Manually added from file
 labels = ["RA", "Mean RT + RA", "Var. + Shan. + P3 Kur.", 
           "Kur. + Shan. + P3 Kur.", "Kur. + Shan."]
 

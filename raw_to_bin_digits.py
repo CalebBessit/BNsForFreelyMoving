@@ -1,15 +1,9 @@
-# Converts raw data to evidence logits which can be used by the network for inference
+# Converts raw data to evidence digits which can be used by the network for inference
 # 06 October 2025
-# Caleb Bessit
+# Caleb Bessit and Matthew Dean
 
 import os
 import numpy as np
-# import argparse
-
-# parser = argparse.ArgumentParser(description="Example command-line program")
-# parser.add_argument("stat_index", type=int, help="Path to the input file")        # positional
-# args = parser.parse_args()
-
 
 subjects = (10,15)
 

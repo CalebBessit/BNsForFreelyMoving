@@ -1,5 +1,5 @@
 # Bayesian network for detecting freely-moving thoughts.
-# Caleb Bessit
+# Caleb Bessit and Matthew Dean
 # 02 October 2025
 
 from pylab import *
@@ -10,7 +10,7 @@ import os
 
 # Create network
 
-DOING_DECISIONS = True
+DOING_DECISIONS = False
 
 if DOING_DECISIONS:
     bn = gum.InfluenceDiagram()
@@ -81,13 +81,12 @@ if DOING_DECISIONS:
     bn.addArc("load_type", "utility")
     bn.addArc("notify_user","utility")
 
-# Topology created, now create probability tables.
-
 # Do it in layers: start with parent node, then for every node in feature layer 1 and then every node in feature layer 2
 # Parent node:
 fmt_prob = 0.495260663507109
 bn.cpt(parent_node[0]).fillWith([1-fmt_prob,fmt_prob])
 
+# Hard code values based on assumptions
 bn.cpt("load_type").fillWith([0.8, 0.2])
 bn.cpt("history").fillWith([fmt_prob, 0.45,0.35])
 # Extract conditional probabilities
@@ -99,8 +98,8 @@ probs = np.array(probs)
 
 # Calculated from the dataset
 ocular_probs = {'pupil_dil': [[1-0.771024986863271,0.771024986863271],[1-0.7837729834522977,0.7837729834522977]]}
-# Hard code probabilities for large external stimulus, environment variables
 
+# Hard code probabilities for large external stimulus, environment variables
 bn.cpt('large_es')[{'freely_moving_thoughts':1}] = [0.9,0.1]    #If we are having freely moving thoughts, it is highly unlikely that there is a large external stimulus
 bn.cpt('large_es')[{'freely_moving_thoughts':0}] = [0.35,0.65]  #If we are not having freely moving thoughts, it is likely, though not super likely, that there is a large external stimulus. 
 
@@ -138,54 +137,34 @@ os.makedirs(outdir, exist_ok=True)
 
 # Table for utility function
 if DOING_DECISIONS:
-    # bn.utility("utility")[{"freely_moving_thoughts":1, "notify_user":1}] = 100    #notifying the user when they have freely-moving thoughts is very good
-    # bn.utility("utility")[{"freely_moving_thoughts":0, "notify_user":0}] = 50     #not notifying the user when they are not having freely-moving thoughts is also good (neutral?)
-    # bn.utility("utility")[{"freely_moving_thoughts":1, "notify_user":0}] = -50    #not notifying the user when they are having freely-moving thoughts is not good
-    # bn.utility("utility")[{"freely_moving_thoughts":0, "notify_user":1}] = -100   #notifying the user when they are not having freely-moving thoughts (potentially distracting them) is very bad
-
-
-
-    # Fill with all zeros initially for debugging
-
-    # Initialize all combinations to 0 (or a baseline utility)
-    u = bn.utility("utility")
-    for fmt in range(2):
-        for load in range(2):
-            for hist in range(3):
-                for notify in range(2):
-                    u[{"freely_moving_thoughts": fmt,
-                    "load_type": load,
-                    "history": hist,
-                    "notify_user": notify}] = 0.0  
-
-
-    bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":1, "history":2, "notify_user":1}] = 100    #notifying the user when they have freely-moving thoughts is very good
-    bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":1, "history":1, "notify_user":1}] = 95    #notifying the user when they have freely-moving thoughts is very good
-    bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":1, "history":0, "notify_user":1}] = 90    #notifying the user when they have freely-moving thoughts is very good
-    bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":0, "history":2, "notify_user":1}] = 95    #notifying the user when they have freely-moving thoughts is very good
-    bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":0, "history":1, "notify_user":1}] = 90    #notifying the user when they have freely-moving thoughts is very good
-    bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":0, "history":0, "notify_user":1}] = 85    #notifying the user when they have freely-moving thoughts is very good
+    # Utility values below were assigned by reasoning though the implications of each assignment in the context of notifying a user
+    bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":1, "history":2, "notify_user":1}] = 100    
+    bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":1, "history":1, "notify_user":1}] = 95    
+    bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":1, "history":0, "notify_user":1}] = 90    
+    bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":0, "history":2, "notify_user":1}] = 95    
+    bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":0, "history":1, "notify_user":1}] = 90    
+    bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":0, "history":0, "notify_user":1}] = 85    
     
-    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":1, "history":2, "notify_user":1}] = 60    #notifying the user when they have freely-moving thoughts is very good
-    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":1, "history":1, "notify_user":1}] = 50    #notifying the user when they have freely-moving thoughts is very good
-    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":1, "history":0, "notify_user":1}] = -100    #notifying the user when they have freely-moving thoughts is very good
-    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":0, "history":2, "notify_user":1}] = 50    #notifying the user when they have freely-moving thoughts is very good
-    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":0, "history":1, "notify_user":1}] = 40    #notifying the user when they have freely-moving thoughts is very good
-    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":0, "history":0, "notify_user":1}] = -80    #notifying the user when they have freely-moving thoughts is very good
+    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":1, "history":2, "notify_user":1}] = 60    
+    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":1, "history":1, "notify_user":1}] = 50    
+    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":1, "history":0, "notify_user":1}] = -100    
+    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":0, "history":2, "notify_user":1}] = 50    
+    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":0, "history":1, "notify_user":1}] = 40    
+    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":0, "history":0, "notify_user":1}] = -80    
     
-    bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":1, "history":2, "notify_user":0}] = -100    #notifying the user when they have freely-moving thoughts is very good
-    bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":1, "history":1, "notify_user":0}] = -95    #notifying the user when they have freely-moving thoughts is very good
-    bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":1, "history":0, "notify_user":0}] = -90    #notifying the user when they have freely-moving thoughts is very good
-    bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":0, "history":2, "notify_user":0}] = -95    #notifying the user when they have freely-moving thoughts is very good
-    bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":0, "history":1, "notify_user":0}] = -90    #notifying the user when they have freely-moving thoughts is very good
-    bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":0, "history":0, "notify_user":0}] = -85   #notifying the user when they have freely-moving thoughts is very good
+    bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":1, "history":2, "notify_user":0}] = -100    
+    bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":1, "history":1, "notify_user":0}] = -95    
+    bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":1, "history":0, "notify_user":0}] = -90    
+    bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":0, "history":2, "notify_user":0}] = -95    
+    bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":0, "history":1, "notify_user":0}] = -90    
+    bn.utility("utility")[{"freely_moving_thoughts":1, "load_type":0, "history":0, "notify_user":0}] = -85   
     
-    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":1, "history":2, "notify_user":0}] = -5    #notifying the user when they have freely-moving thoughts is very good
-    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":1, "history":1, "notify_user":0}] = -2    #notifying the user when they have freely-moving thoughts is very good
-    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":1, "history":0, "notify_user":0}] = 100    #notifying the user when they have freely-moving thoughts is very good
-    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":0, "history":2, "notify_user":0}] = -3    #notifying the user when they have freely-moving thoughts is very good
-    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":0, "history":1, "notify_user":0}] =  -1   #notifying the user when they have freely-moving thoughts is very good
-    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":0, "history":0, "notify_user":0}] = 95    #notifying the user when they have freely-moving thoughts is very good
+    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":1, "history":2, "notify_user":0}] = -5    
+    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":1, "history":1, "notify_user":0}] = -2    
+    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":1, "history":0, "notify_user":0}] = 100    
+    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":0, "history":2, "notify_user":0}] = -3    
+    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":0, "history":1, "notify_user":0}] =  -1   
+    bn.utility("utility")[{"freely_moving_thoughts":0, "load_type":0, "history":0, "notify_user":0}] = 95    
     
     
 

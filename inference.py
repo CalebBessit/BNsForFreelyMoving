@@ -8,14 +8,13 @@ import numpy as np
 import pandas as pd
 import pyagrum as gum
 import pyagrum.lib.image as gumimage
-import pyagrum.lib.notebook as gnb
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, balanced_accuracy_score
 
 
 
 #Load network and test data
 
-DOING_DECISIONS = True
+DOING_DECISIONS = False
 
 if DOING_DECISIONS:
     bn = gum.loadID( os.path.join("bayesian_networks","FreelyMovingThoughts.bifxml") )
@@ -146,7 +145,6 @@ def decision_analysis(evidence_subset):
 
         notified_user = 1 if float(p_action[1])>0.5 else 0
         preds.append(notified_user)
-        true_val = trues[i]
  
 
         results.append({
@@ -158,9 +156,8 @@ def decision_analysis(evidence_subset):
         })
 
         if i==0:
-            # gnb.getInfluenceDiagram(bn, filename="bayesian_networks/decision_network_with_evidence.pdf", engine="dot")
             gumimage.exportInference(bn, f"bayesian_networks/dn_corr_{"_".join(ev)}.pdf", evs=ev)
-        # print(results, "\n")
+
 
         for scenario_idx in range(3):
             evidence = scenarios[scenario_idx]
@@ -168,7 +165,6 @@ def decision_analysis(evidence_subset):
             merged_ev = ev
             for key, value in evidence.items():
                 merged_ev[key] = value
-            # merged_ev = ev | evidence
 
             ie.setEvidence(merged_ev)
             ie.makeInference()
@@ -181,8 +177,6 @@ def decision_analysis(evidence_subset):
             notified_user = 1 if float(p_action[1])>0.5 else 0
             scenario_preds[scenario_idx].append(notified_user)
 
-    # metrics
-    # print(trues, preds)
     acc = accuracy_score(trues, preds)
     bal_acc = balanced_accuracy_score(trues, preds)
     prec = precision_score(trues, preds, zero_division=0)
@@ -203,7 +197,6 @@ def decision_analysis(evidence_subset):
         'rec': rec,
         'f1': f1,
     }
-    # print(result)
 
     print(f"\n==== DECSISION RESULTS with {evidence_subset} ======")
 
@@ -236,7 +229,6 @@ def evaluate_subset_across_trials(subset):
     rec = recall_score(trues, preds, zero_division=0)
     f1 = f1_score(trues, preds, zero_division=0)
 
-    # avg confidence: mean probability assigned to the chosen class
     chosen_confidences = []
     for prob, pred in zip(probs, preds):
         chosen_confidences.append(prob if pred==1 else (1.0-prob))
@@ -316,7 +308,9 @@ if DOING_DECISIONS:
     
     print("All agreeing evidence: should be one")
     print(posterior_prob_dec({"history":2,"load_type":1, "alpha_shan":1, "alpha_kurt":1,"p3_kurt":1}))
-    # print(posterior_prob_dec({"history":1,"load_type":1}))
+    print(posterior_prob_dec({"history":1,"load_type":1}))
+
+
 
 else:
     results = []
@@ -329,7 +323,6 @@ else:
     print("No evidence:", res_no_evidence)
 
     # Do inference using behavioural evidence only
-
     beh_subsets = []
     for i in range(1, len(behavioral_features)+1):
         for combination in itertools.combinations(behavioral_features, i):
@@ -375,8 +368,6 @@ else:
 
 
     # Evaluating effect of elicited variables on other unobserved variables
-
-    
     print("\n ==== SCENARIO BASED OUTCOMES =======")
     for idx in range(len(scenarios)):
         evidence, name = scenarios[idx], scenario_names[idx]
@@ -389,13 +380,3 @@ else:
             results[feature] = value
         
         print(f"\t\t + {results}")
-
-
-        
-
-    # posterior_prob("ra", {"large_es":0, ""})
-
-    # env and stimulus on behaviour
-
-    # env and 
-
