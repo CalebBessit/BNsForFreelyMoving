@@ -101,7 +101,7 @@ ocular_probs = {'pupil_dil': [[1-0.771024986863271,0.771024986863271],[1-0.78377
 
 # Hard code probabilities for large external stimulus, environment variables
 bn.cpt('large_es')[{'freely_moving_thoughts':1}] = [0.9,0.1]    #If we are having freely moving thoughts, it is highly unlikely that there is a large external stimulus
-bn.cpt('large_es')[{'freely_moving_thoughts':0}] = [0.35,0.65]  #If we are not having freely moving thoughts, it is likely, though not super likely, that there is a large external stimulus. 
+bn.cpt('large_es')[{'freely_moving_thoughts':0}] = [0.48,0.52]  #If we are not having freely moving thoughts, it is likely, though not super likely, that there is a large external stimulus. 
 
 bn.cpt('env')[{'large_es':1}] = [0.15,0.35,0.5]  #If there is a large external stimulus, we are most likely in a high-disruption-level environment, second-most likely in a medium-disruption-level environment, and least likely in a low-disruption-level environment
 bn.cpt('env')[{'large_es':0}] = [0.5,0.35,0.15]
@@ -175,3 +175,4 @@ else:
     gum.saveBN(bn, os.path.join(outdir, f"FreelyMovingThoughts.bif"))
 
 gumimage.export(bn, "bayesian_networks/network.pdf")
+print("Network constructed.")
